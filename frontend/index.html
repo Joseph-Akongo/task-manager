@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <title>Task Manager</title>
+    <style>
+        .completed {
+            background-color: #d4edda;
+            transition: background-color 0.5s ease-out;
+        }
+
+        .removed {
+            background-color: #f8d7da;
+            transition: background-color 1s ease-out;
+        }
+
+        #sidebar {
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            padding-top: 20px;
+            background-color: #f8f9fa;
+            overflow-y: auto;
+            border-right: 1px solid #dee2e6;
+            z-index: 1000;
+        }
+
+        #tasks-container {
+            margin-left: 220px;
+            transition: margin-left 0.5s;
+        }
+
+        #completed-tasks-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #completed-tasks-container .card {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Task Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#"><i class="fas fa-tasks"></i> All Tasks <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html"><i class="fas fa-chart-pie"></i> Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mytasks.html"><i class="fas fa-user"></i> My Tasks</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <div id="sidebar">
+        <h2 class="navbar-brand">Completed Tasks</h2>
+        <div id="completed-tasks-container">
+            <!-- Completed task items will go here -->
+        </div>
+    </div>
+
+    <div id="tasks-container">
+        <div class="container-fluid">
+            <div class="row">
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">All Tasks</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button class="btn btn-sm btn-outline-secondary" id="clear-all">Clear All Tasks</button>
+                        </div>
+                    </div>
+
+                    <div id="tasks-container" class="row">
+                        <!-- Task items will go here -->
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <form id="task-form" class="mt-4">
+        <div class="input-group mb-3">
+            <input type="text" id="task-input" class="form-control" placeholder="Add a new task" required>
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-success">Add Task</button>
+            </div>
+        </div>
+    </form>
+
+    <footer class="bg-light">
+        <div class="container">
+            <p class="text-center">&copy; 2023 Task Manager App</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Sample initial tasks
+        const initialTasks = [
+            { id: 1, text: 'Task 1', description: 'Description of Task 1', completed: false },
+            { id: 2, text: 'Task 2', description: 'Description of Task 2', completed: false },
+            { id: 3, text: 'Task 3', description: 'Description of Task 3', completed: false }
+        ];
+
+        // Load initial tasks
+        const tasksContainer = document.getElementById('tasks-container');
+        const completedTasksContainer = document.getElementById('completed-tasks-container');
+
+        initialTasks.forEach(task => {
+            appendTaskToContainer(task);
+        });
+
+        // Event listener for form submission
+        document.getElementById('task-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            const taskInput = document.getElementById('task-input');
+            const taskText = taskInput.value.trim();
+
+            if (taskText !== '') {
+                const newTask = { id: Date.now(), text: taskText, description: 'Description for ' + taskText, completed: false };
+                appendTaskToContainer(newTask);
+                taskInput.value = ''; // Clear the input field
+                updateStatistics();
+            }
+        });
+
+        // Function to append a task to the tasks container
+        function appendTaskToContainer(task) {
+            const taskCard = createTaskCard(task);
+
+            if (!task.completed) {
+                tasksContainer.appendChild(taskCard);
+            } else {
+                completedTasksContainer.appendChild(taskCard);
+            }
+        }
+
+        // Function to create a task card
+        function createTaskCard(task) {
+            const taskCard = document.createElement('div');
+            taskCard.classList.add('col-md-4', 'mb-3', 'task-card');
+            taskCard.id = task.id;
+
+            taskCard.innerHTML = `
+                <div class="card ${task.completed ? 'completed' : ''}">
+                    <div class="card-body">
+                        <h5 class="card-title">${task.text}</h5>
+                        <p class="card-text">${task.description}</p>
+                        <button class="btn btn-success mr-2" onclick="completeTask(${task.id})">Complete</button>
+                        <button class="btn btn-danger" onclick="removeTask(${task.id})">Remove</button>
+                    </div>
+                </div>
+            `;
+
+            return taskCard;
+        }
+
+        // Function to remove a task by ID
+        function removeTask(taskId) {
+            const taskCard = document.getElementById(taskId);
+
+            if (taskCard) {
+                taskCard.classList.add('removed');
+
+                setTimeout(() => {
+                    taskCard.remove();
+                    updateStatistics();
+                }, 1000);
+            }
+        }
+
+        // Function to mark a task as completed
+        function completeTask(taskId) {
+            const taskCard = document.getElementById(taskId);
+
+            if (taskCard && !taskCard.classList.contains('completed')) {
+                taskCard.classList.add('completed');
+
+                const clonedTaskCard = createTaskCard({
+                    ...initialTasks.find(task => task.id === taskId),
+                    completed: true
+                });
+
+                completedTasksContainer.appendChild(clonedTaskCard);
+                updateStatistics();
+            }
+        }
+
+        // Function to update the statistics page
+        function updateStatistics() {
+            const totalTasks = initialTasks.length;
+            const completedTasks = document.querySelectorAll('.completed').length;
+            const percentageCompleted = (completedTasks / totalTasks) * 100;
+
+            // Update the statistics page content
+            const statisticsContainer = document.getElementById('statistics-container');
+            statisticsContainer.innerHTML = `
+                <h2>Statistics</h2>
+                <p>Total Tasks: ${totalTasks}</p>
+                <p>Completed Tasks: ${completedTasks}</p>
+                <p>Percentage Completed: ${percentageCompleted.toFixed(2)}%</p>
+            `;
+        }
+
+        // Initial update of statistics
+        updateStatistics();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>My Tasks</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Task Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="fas fa-tasks"></i> All Tasks</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#"><i class="fas fa-user"></i> My Tasks <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html"><i class="fas fa-chart-pie"></i> Statistics</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>My Tasks</h2>
+            <div id="tasks-container">
+                <div class="task">
+                    <span class="task-text">Task 1</span>
+                    <button class="btn btn-success complete-btn" onclick="completeTask(this)">Complete</button>
+                </div>
+                <!-- Add more task items here -->
+            </div>
+            <form id="task-form">
+                <input type="text" id="task-input" placeholder="Add a new task" required>
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+    </div>
+
+    <footer class="bg-light">
+        <div class="container">
+            <p class="text-center">&copy; 2023 Task Manager App</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function completeTask(button) {
+            // Add logic to mark the task as complete
+            // For simplicity, let's hide the task when it's completed
+            const task = button.parentNode;
+            task.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
